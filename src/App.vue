@@ -4,27 +4,32 @@
     <div class="wrapper-content">
       <section>
         <div class="container">
-          <h1> {{ title }} </h1>
+          <!-- message -->
           <message  v-if="message" :message="message" />
+
           <!-- new note -->
-          <div class="new-note">
-            <input v-model="note.title" type="text">
-            <textarea v-model="note.descr"></textarea>
-            <button @click="addNote">New note</button>
+          <newNote :note = "note" @addNote = "addNote"/>
+
+          <div class="note-header" style="margin: 36px 0;">
+            <!--title-->
+            <h1> {{ title }} </h1>
+
+            <!-- search -->
+            <search
+                    :value="search"
+                    placeholder="Find your note"
+                    @search="search = $event"/>
+
+            <!-- icons contrlos-->
+            <div class="icons">
+              <svg :class="{ active: grid}" @click="grid = true" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <svg :class="{ active: !grid}" @click="grid = false" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg>
+            </div>
           </div>
 
           <!-- note list -->
-          <div class="notes">
-            <div class="note" v-for="(note, index) in notes" :key="index">
-              <div class="note-header">
-                <p>{{ note.title }}</p>
-              </div>
-              <div class="note-body">
-                <p>{{ note.descr }}</p>
-                <span>{{ note.date }}</span>
-              </div>
-            </div>
-          </div>
+          <notes :notes = "notesFilter" :grid="grid"  @remove="removeNote"/>
+
         </div>
       </section>
     </div>
@@ -33,43 +38,58 @@
 
 <script>
 import message from '@/components/Message.vue'
+import newNote from '@/components/NewNote.vue'
+import notes from '@/components/Notes.vue'
+import search from '@/components/Search.vue'
 
 
 export default {
   components: {
-    message
+    message,
+    notes,
+    newNote,
+    search
   },
   data() {
     return {
       title: 'Notes App',
+      search: '',
       message: null,
+      grid: true,
       note: {
+        id: '',
         title: '',
-        descr: ''
+        descr: '',
+        priority: 'standard'
       },
       notes: [
         {
+          id: 1,
           title: 'First Note',
           descr: 'Description for first note',
-          date: new Date(Date.now()).toLocaleString()
+          date: new Date(Date.now()).toLocaleString(),
+          priority: 'standard'
         },
         {
+          id: 2,
           title: 'Second Note',
           descr: 'Description for second note',
-          date: new Date(Date.now()).toLocaleString()
+          date: new Date(Date.now()).toLocaleString(),
+          priority: 'standard'
         },
         {
+          id: 3,
           title: 'Third Note',
           descr: 'Description for third note',
-          date: new Date(Date.now()).toLocaleString()
+          date: new Date(Date.now()).toLocaleString(),
+          priority: 'standard'
         }
       ]
     }
   },
   methods: {
     addNote () {
-      // console.log(this.note)
-      let {title, descr} = this.note
+      let {title, descr, priority} = this.note
 
       if (title === '') {
         this.message = 'title can`t be blank!'
@@ -79,11 +99,35 @@ export default {
       this.notes.push({
         title,
         descr,
-        date: new Date(Date.now()).toLocaleString()
+        date: new Date(Date.now()).toLocaleString(),
+        priority,
+        id: this.notes[this.notes.length - 1].id + 1
       })
+
       this.message = null
       this.note.title = ''
       this.note.descr = ''
+      this.note.priority = 'standard'
+    },
+    removeNote (index) {
+      this.notes.splice(index, 1)
+    }
+  },
+  computed: {
+    notesFilter () {
+      let array = this.notes,
+          search = this.search
+      if(!search) return array
+      // Small
+      search = search.trim().toLowerCase()
+      //Filter
+      array = array.filter(function(item) {
+        if (item.title.toLowerCase().indexOf(search) !== -1) {
+          return item
+        }
+      })
+      // Error
+      return array;
     }
   }
 
