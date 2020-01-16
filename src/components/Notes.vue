@@ -3,8 +3,8 @@
     <div class="notes">
         <div class="note" :class="[{full: !grid, important: note.priority === 'important', veryImportant: note.priority === 'veryImportant' }]" v-for="(note, index) in notes" :key="index">
             <div class="note-header" :class="{full: !grid}">
-                <input type="text" v-if="titleEdit">
-                <p v-else @click="editTitle">{{ note.title }}</p>
+                <input v-if="notes[index].selected" type="text">
+                <p @click="editTitle(index)">{{ note.title }}</p>
                 <p style="cursor: pointer;" @click="removeNote(index)">x</p>
             </div>
             <div class="note-body">
@@ -30,7 +30,7 @@
         },
         data () {
           return {
-              titleEdit: false
+
           }
         },
         methods: {
@@ -38,8 +38,9 @@
                 console.log(`Note id - ${index} removed`)
                 this.$emit('remove', index)
             },
-            editTitle() {
-                this.titleEdit = true
+            editTitle(index) {
+                this.notes[index].selected = true
+
             }
 
         },

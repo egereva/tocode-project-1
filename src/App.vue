@@ -60,7 +60,8 @@ export default {
         id: '',
         title: '',
         descr: '',
-        priority: 'standard'
+        priority: 'standard',
+        selected: false
       },
       notes: [
         {
@@ -68,21 +69,24 @@ export default {
           title: 'First Note',
           descr: 'Description for first note',
           date: new Date(Date.now()).toLocaleString(),
-          priority: 'standard'
+          priority: 'standard',
+          selected: false
         },
         {
           id: 2,
           title: 'Second Note',
           descr: 'Description for second note',
           date: new Date(Date.now()).toLocaleString(),
-          priority: 'standard'
+          priority: 'standard',
+          selected: false
         },
         {
           id: 3,
           title: 'Third Note',
           descr: 'Description for third note',
           date: new Date(Date.now()).toLocaleString(),
-          priority: 'standard'
+          priority: 'standard',
+          selected: false
         }
       ]
     }
@@ -101,13 +105,15 @@ export default {
         descr,
         date: new Date(Date.now()).toLocaleString(),
         priority,
-        id: this.notes[this.notes.length - 1].id + 1
+        id: this.notes[this.notes.length - 1].id + 1,
+        selected: false
       })
 
       this.message = null
       this.note.title = ''
       this.note.descr = ''
-      this.note.priority = 'standard'
+      this.note.priority = 'standard',
+      this.note.selected = false
     },
     removeNote (index) {
       this.notes.splice(index, 1)
