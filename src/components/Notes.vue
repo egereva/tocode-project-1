@@ -1,14 +1,36 @@
 <template>
     <!-- note list -->
-    <div class="notes">
-        <div class="note" :class="[{full: !grid, important: note.priority === 'important', veryImportant: note.priority === 'veryImportant' }]" v-for="(note, index) in notes" :key="index">
+    <div class="notes" @click="$emit('closeEdit')">
+        <div  class="note" :class="[{full: !grid, important: note.priority === 'important', veryImportant: note.priority === 'veryImportant' }]" v-for="(note, index) in notes" :key="index">
             <div class="note-header" :class="{full: !grid}">
-                <input v-if="notes[index].selected" type="text">
-                <p @click="editTitle(index)">{{ note.title }}</p>
+
+            <!-- title edit -->
+                <input  class="note-title-edit"
+                        ref="titleInput"
+                        type="text"
+                        @click.stop =""
+                        v-show="notes[index].selected && titleEdit"
+                        v-model="newTitle"
+                        v-on:keyup.13="saveСhanges(index)"
+                        v-on:keyup.27="deleteСhanges(index)" >
+
+                <p @click.stop ="" v-show="!notes[index].selected || !titleEdit" @click="editTitle(index)">{{ note.title }}</p>
                 <p style="cursor: pointer;" @click="removeNote(index)">x</p>
             </div>
             <div class="note-body">
-                <p>{{ note.descr }}</p>
+
+                <!-- description edit -->
+                <textarea
+                        class="note-descr-edit"
+                        ref="descrInput"
+                        type="text"
+                        @click.stop =""
+                        v-show="notes[index].selected && descriptionEdit"
+                        v-model="newDescription"
+                        v-on:keyup.13="saveСhanges(index)"
+                        v-on:keyup.27="deleteСhanges(index)"></textarea>
+
+                <p @click.stop ="" v-show="!notes[index].selected || !descriptionEdit" @click="editDescription(index)">{{ note.descr }}</p>
                 <span>{{ note.date }}</span>
             </div>
         </div>
@@ -30,8 +52,16 @@
         },
         data () {
           return {
-
+            newTitle: '',
+            newDescription: '',
+            titleEdit: false,
+            descriptionEdit: false
           }
+        },
+        mounted() {
+        },
+        computed: {
+
         },
         methods: {
             removeNote(index) {
@@ -39,9 +69,48 @@
                 this.$emit('remove', index)
             },
             editTitle(index) {
-                this.notes[index].selected = true
+                this.titleEdit = true
+                this.descriptionEdit = false
 
-            }
+                this.notes.forEach( note => note.selected = false )
+                this.notes[index].selected = true
+                this.newTitle = this.notes[index].title
+
+                this.$nextTick(function(){
+                    this.$refs.titleInput[index].focus()
+                });
+            },
+            editDescription(index) {
+                this.titleEdit = false
+                this.descriptionEdit = true
+
+                this.notes.forEach( note => note.selected = false )
+                this.notes[index].selected = true
+                this.newDescription = this.notes[index].descr
+
+                this.$nextTick(function(){
+                    this.$refs.descrInput[index].focus()
+                });
+            },
+            saveСhanges(index) {
+                this.notes[index].selected = false
+
+                if(this.titleEdit) {
+                    this.notes[index].title = this.newTitle
+                    this.newTitle = ''
+                }else {
+                    this.notes[index].descr = this.newDescription
+                    this.newDescription= ''
+                    }
+            },
+            deleteСhanges(index) {
+                this.notes[index].selected = false
+
+                this.newTitle = ''
+                this.newDescription= ''
+
+            },
+
 
         },
 
@@ -124,6 +193,17 @@
             font-size: 14px;
             color: #999999;
         }
+    }
+
+    .note-title-edit {
+        width: 80%;
+        height: 30px;
+        margin-bottom: 0;
+    }
+
+    .note-descr-edit {
+        padding: 20px;
+        margin: 15px 0;
     }
 
 </style>
