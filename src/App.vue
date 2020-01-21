@@ -8,7 +8,7 @@
           <message  v-if="message" :message="message" />
 
           <!-- new note -->
-          <newNote :note = "note" @addNote = "addNote"/>
+          <newNote :note = "note" :priorities="priorities" @addNote = "addNote"/>
 
           <div class="note-header" style="margin: 36px 0;">
             <!--title-->
@@ -89,7 +89,21 @@ export default {
           priority: 'standard',
           selected: false
         }
-      ]
+      ],
+      priorities: [
+        {
+          title: 'Стандартный',
+          value: 'standard',
+        },
+        {
+          title: 'Важный',
+          value: 'important',
+        },
+        {
+          title: 'Очень важный',
+          value: 'veryImportant',
+        }
+      ],
     }
   },
   methods: {

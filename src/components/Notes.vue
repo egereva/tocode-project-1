@@ -11,10 +11,10 @@
                         @click.stop =""
                         v-show="notes[index].selected && titleEdit"
                         v-model="newTitle"
-                        v-on:keyup.13="saveСhanges(index)"
-                        v-on:keyup.27="deleteСhanges(index)" >
+                        @keyup.13="saveСhanges(index)"
+                        @keyup.27="deleteСhanges(index)" >
 
-                <p @click.stop ="" v-show="!notes[index].selected || !titleEdit" @click="editTitle(index)">{{ note.title }}</p>
+                <p @click.stop ="" v-show="!notes[index].selected || !titleEdit" @click="editString(index, note.title )">{{ note.title }}</p>
                 <p style="cursor: pointer;" @click="removeNote(index)">x</p>
             </div>
             <div class="note-body">
@@ -27,10 +27,10 @@
                         @click.stop =""
                         v-show="notes[index].selected && descriptionEdit"
                         v-model="newDescription"
-                        v-on:keyup.13="saveСhanges(index)"
-                        v-on:keyup.27="deleteСhanges(index)"></textarea>
+                        @keyup.13="saveСhanges(index)"
+                        @keyup.27="deleteСhanges(index)"></textarea>
 
-                <p @click.stop ="" v-show="!notes[index].selected || !descriptionEdit" @click="editDescription(index)">{{ note.descr }}</p>
+                <p @click.stop ="" v-show="!notes[index].selected || !descriptionEdit" @click="editString(index, note.descr)">{{ note.descr }}</p>
                 <span>{{ note.date }}</span>
             </div>
         </div>
@@ -47,7 +47,7 @@
             grid: {
                 type: Boolean,
                 required: true
-            },
+            }
 
         },
         data () {
@@ -68,29 +68,30 @@
                 console.log(`Note id - ${index} removed`)
                 this.$emit('remove', index)
             },
-            editTitle(index) {
-                this.titleEdit = true
-                this.descriptionEdit = false
+            editString(index, string) {
+              if (string === this.notes[index].title ) {
+                  this.titleEdit = true
+                  this.descriptionEdit = false
 
-                this.notes.forEach( note => note.selected = false )
-                this.notes[index].selected = true
-                this.newTitle = this.notes[index].title
+                  this.notes.forEach( note => note.selected = false )
+                  this.notes[index].selected = true
+                  this.newTitle = this.notes[index].title
 
-                this.$nextTick(function(){
-                    this.$refs.titleInput[index].focus()
-                });
-            },
-            editDescription(index) {
-                this.titleEdit = false
-                this.descriptionEdit = true
+                  this.$nextTick(function(){
+                      this.$refs.titleInput[index].focus()
+                  });
+              } else {
+                  this.titleEdit = false
+                  this.descriptionEdit = true
 
-                this.notes.forEach( note => note.selected = false )
-                this.notes[index].selected = true
-                this.newDescription = this.notes[index].descr
+                  this.notes.forEach( note => note.selected = false )
+                  this.notes[index].selected = true
+                  this.newDescription = this.notes[index].descr
 
-                this.$nextTick(function(){
-                    this.$refs.descrInput[index].focus()
-                });
+                  this.$nextTick(function(){
+                      this.$refs.descrInput[index].focus()
+                  });
+              }
             },
             saveСhanges(index) {
                 this.notes[index].selected = false

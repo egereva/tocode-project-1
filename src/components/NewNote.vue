@@ -21,24 +21,14 @@
             note: {
                 type: Object,
                 required: true
+            },
+            priorities: {
+                type: Array,
+                required: true
             }
         },
         data() {
             return {
-                priorities: [
-                    {
-                        title: 'Стандартный',
-                        value: 'standard',
-                    },
-                    {
-                        title: 'Важный',
-                        value: 'important',
-                    },
-                    {
-                        title: 'Очень важный',
-                        value: 'veryImportant',
-                    }
-                ],
                 currentPriority: 'standard'
             }
         },
